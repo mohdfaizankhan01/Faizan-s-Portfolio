@@ -56,6 +56,15 @@
 
   #bg-canvas { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
 
+  /* soft glow that trails the cursor */
+  .cursor-glow {
+    position: fixed; top: 0; left: 0; width: 420px; height: 420px; border-radius: 50%;
+    pointer-events: none; z-index: 1; opacity: 0; transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(34,211,238,0.13), rgba(139,92,246,0.08) 42%, transparent 70%);
+    filter: blur(14px); will-change: left, top; transition: opacity 0.5s var(--ease);
+  }
+  @media (prefers-reduced-motion: reduce) { .cursor-glow { display: none; } }
+
   .wrap { position: relative; z-index: 2; }
   .container { width: min(1180px, 92vw); margin: 0 auto; }
 
@@ -308,6 +317,7 @@
 <a href="#top" class="skip">Skip to content</a>
 
 <canvas id="bg-canvas" aria-hidden="true"></canvas>
+<div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
 
 <div class="wrap">
   <!-- NAV -->
@@ -618,6 +628,23 @@
     if (e.target.tagName === "A") { navlinks.classList.remove("open"); menuBtn.setAttribute("aria-expanded", "false"); }
   });
 
+  /* ---------- Cursor-trailing glow ---------- */
+  var glow = document.getElementById("cursorGlow");
+  if (glow && !reduce && window.matchMedia("(pointer: fine)").matches) {
+    var gx = window.innerWidth / 2, gy = window.innerHeight / 2;
+    var tx = gx, ty = gy, shown = false, glowRaf;
+    window.addEventListener("mousemove", function (e) {
+      tx = e.clientX; ty = e.clientY;
+      if (!shown) { glow.style.opacity = "1"; shown = true; }
+    });
+    document.addEventListener("mouseleave", function () { glow.style.opacity = "0"; shown = false; });
+    (function follow() {
+      glowRaf = requestAnimationFrame(follow);
+      gx += (tx - gx) * 0.12; gy += (ty - gy) * 0.12;
+      glow.style.left = gx + "px"; glow.style.top = gy + "px";
+    })();
+  }
+
   /* ---------- Scroll reveal + Motion entrance animations ---------- */
   /* motion.js is deferred — wait for DOMContentLoaded before accessing window.Motion */
   if (reduce) {
@@ -785,6 +812,21 @@
     var points = new THREE.Points(geometry, material);
     scene.add(points);
 
+    /* cursor parallax — target follows pointer, camera eases toward it */
+    var BASE = { x: 0, y: 355, z: 1220 };
+    var mouse = { x: 0, y: 0 }, cam = { x: 0, y: 0 };
+    window.addEventListener("mousemove", function (e) {
+      mouse.x = (e.clientX / window.innerWidth - 0.5);
+      mouse.y = (e.clientY / window.innerHeight - 0.5);
+    });
+    window.addEventListener("mouseleave", function () { mouse.x = 0; mouse.y = 0; });
+    /* touch support */
+    window.addEventListener("touchmove", function (e) {
+      if (!e.touches[0]) return;
+      mouse.x = (e.touches[0].clientX / window.innerWidth - 0.5);
+      mouse.y = (e.touches[0].clientY / window.innerHeight - 0.5);
+    }, { passive: true });
+
     var count = 0, animId;
     function animate() {
       animId = requestAnimationFrame(animate);
@@ -800,6 +842,14 @@
         }
       }
       posAttr.needsUpdate = true;
+
+      /* ease camera toward cursor target and keep looking at the field centre */
+      cam.x += (mouse.x * 420 - cam.x) * 0.045;
+      cam.y += (-mouse.y * 220 - cam.y) * 0.045;
+      camera.position.x = BASE.x + cam.x;
+      camera.position.y = BASE.y + cam.y;
+      camera.lookAt(0, 0, 0);
+
       renderer.render(scene, camera);
       count += 0.1;
     }
