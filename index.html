@@ -108,33 +108,31 @@
     -webkit-backdrop-filter: blur(20px) saturate(160%);
   }
 
-  /* radial glow behind hero copy so text stays readable over the dots */
-  .hero-copy::before {
-    content: ""; position: absolute; inset: -60px -80px;
-    background: radial-gradient(ellipse at center, rgba(7,7,15,0.82) 40%, transparent 75%);
-    z-index: -1; pointer-events: none; border-radius: 50%;
-  }
-  .hero-copy { position: relative; }
 
   /* ---------- HERO ---------- */
-  .hero { min-height: 100vh; display: flex; align-items: center; padding-top: 120px; padding-bottom: 60px; }
-  .hero-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 50px; align-items: center; width: 100%; }
+  .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 120px 0 80px; }
+  .hero-inner { width: 100%; max-width: 880px; margin: 0 auto; text-align: center; display: flex; flex-direction: column; align-items: center; }
   .status-chip {
     display: inline-flex; align-items: center; gap: 9px; font-family: "JetBrains Mono"; font-size: 0.78rem;
     color: var(--emerald); background: rgba(52,211,153,0.08); border: 1px solid rgba(52,211,153,0.25);
-    padding: 7px 14px; border-radius: 999px; margin-bottom: 26px;
+    padding: 7px 14px; border-radius: 999px; margin-bottom: 30px;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   }
   .status-chip .blink { width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 10px var(--emerald); animation: blink 1.6s infinite; }
   @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
   .hero h1 {
-    font-family: "Space Grotesk"; font-weight: 300; font-size: clamp(2.5rem, 6vw, 4.4rem);
-    line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 22px;
+    font-family: "Space Grotesk"; font-weight: 300; font-size: clamp(2.4rem, 6.5vw, 4.8rem);
+    line-height: 1.07; letter-spacing: -0.035em; margin-bottom: 24px;
+    text-shadow: 0 2px 40px rgba(7,7,15,0.9);
   }
   .hero h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 600; }
   @keyframes float { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-10px); } }
   .float-animation { animation: float 6s ease-in-out infinite; }
-  .hero p.sub { color: var(--muted); font-size: 1.15rem; max-width: 520px; margin-bottom: 34px; }
-  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+  .hero p.sub {
+    color: var(--muted); font-family: "JetBrains Mono"; font-size: 0.95rem; letter-spacing: 0.04em;
+    margin-bottom: 38px; text-shadow: 0 2px 20px rgba(7,7,15,0.9);
+  }
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; justify-content: center; }
   .btn {
     font-family: "JetBrains Mono"; font-size: 0.88rem; font-weight: 700; text-decoration: none;
     padding: 14px 26px; border-radius: 12px; cursor: pointer; transition: all 0.3s var(--ease);
@@ -149,22 +147,6 @@
   .btn-primary:hover::after { opacity: 0.7; }
   .btn-ghost { background: var(--surface); border-color: var(--border); color: var(--text); }
   .btn-ghost:hover { border-color: var(--border-glow); background: var(--surface-strong); box-shadow: 0 0 0 1px var(--border-glow); }
-  .hero-stats { display: flex; gap: 30px; margin-top: 46px; flex-wrap: wrap; }
-  .hero-stats .s strong { font-family: "Space Grotesk"; font-size: 1.7rem; display: block; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .hero-stats .s span { font-size: 0.78rem; color: var(--faint); font-family: "JetBrains Mono"; }
-
-  /* terminal */
-  .terminal { border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--border); }
-  .term-bar { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: rgba(255,255,255,0.05); border-bottom: 1px solid var(--border); }
-  .term-bar .dot { width: 11px; height: 11px; border-radius: 50%; }
-  .term-bar .r { background: #ff5f57; } .term-bar .y { background: #febc2e; } .term-bar .g { background: #28c840; }
-  .term-bar .name { margin-left: 8px; font-family: "JetBrains Mono"; font-size: 0.74rem; color: var(--faint); }
-  .term-body { background: rgba(6,6,14,0.78); backdrop-filter: blur(14px); padding: 22px; font-family: "JetBrains Mono"; font-size: 0.82rem; line-height: 1.85; min-height: 270px; }
-  .term-body .ln { white-space: pre-wrap; }
-  .term-body .pr { color: var(--cyan); } .term-body .cm { color: var(--text); } .term-body .ok { color: var(--emerald); } .term-body .gr { color: var(--faint); } .term-body .vl { color: var(--violet); }
-  .cursor { display: inline-block; width: 8px; height: 1.05em; background: var(--cyan); vertical-align: text-bottom; animation: caret 1s steps(1) infinite; }
-  @keyframes caret { 50% { opacity: 0; } }
-
   /* ---------- ABOUT ---------- */
   .about-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 46px; align-items: start; }
   .about-grid p { color: var(--muted); margin-bottom: 18px; font-size: 1.02rem; }
@@ -283,14 +265,13 @@
 
   /* ---------- RESPONSIVE ---------- */
   @media (max-width: 920px) {
-    .hero-grid, .about-grid, .contact-grid { grid-template-columns: 1fr; }
+    .about-grid, .contact-grid { grid-template-columns: 1fr; }
     .skill-grid, .proj-grid { grid-template-columns: 1fr; }
     .skill-card[style*="span 2"] { grid-column: span 1 !important; }
     .quote-grid, .blog-grid { grid-template-columns: 1fr; }
     .nav-links { display: none; }
     .menu-btn { display: block; }
     .hero { padding-top: 130px; }
-    .terminal { margin-top: 10px; }
   }
   @media (max-width: 920px) {
     .nav-links.open {
@@ -352,28 +333,13 @@
 
   <!-- HERO -->
   <section class="hero container" id="top">
-    <div class="hero-grid">
-      <div class="hero-copy float-animation">
-        <div class="status-chip"><span class="blink"></span>Open to AI / ML research &amp; engineering roles</div>
-        <h1>I turn messy human problems into AI tools that <span class="grad">actually ship</span>.</h1>
-        <p class="sub">MSc Computer Science at the Université de Genève. I ship LLM agents, retrieval systems, and evaluation harnesses — grounded in talking to the humans who actually use them.</p>
-        <div class="hero-btns">
-          <a href="#projects" class="btn btn-primary">View projects <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8h9M8 4l4 4-4 4"/></svg></a>
-          <a href="#contact" class="btn btn-ghost">Contact me</a>
-        </div>
-        <div class="hero-stats">
-          <div class="s"><strong>13,640</strong><span>archival records made queryable</span></div>
-          <div class="s"><strong>100+</strong><span>community members trained</span></div>
-          <div class="s"><strong>0.88</strong><span>retrieval recall, RCnum RAG</span></div>
-        </div>
-      </div>
-
-      <div class="terminal">
-        <div class="term-bar">
-          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-          <span class="name">faizan@unige ~ /portfolio</span>
-        </div>
-        <div class="term-body" id="term"></div>
+    <div class="hero-inner">
+      <div class="status-chip"><span class="blink"></span>Open to AI / ML roles</div>
+      <h1>I turn messy human problems<br>into AI tools that <span class="grad">actually ship</span>.</h1>
+      <p class="sub">AI builder &amp; mentor · Geneva</p>
+      <div class="hero-btns">
+        <a href="#projects" class="btn btn-primary">View projects <svg aria-hidden="true" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 8h9M8 4l4 4-4 4"/></svg></a>
+        <a href="#contact" class="btn btn-ghost">Contact me</a>
       </div>
     </div>
   </section>
@@ -672,16 +638,17 @@
 
       /* Hero entrance — staggered sequence */
       [
-        [".status-chip", { opacity: [0, 1], y: [16, 0] }, 0.15],
-        [".hero h1",     { opacity: [0, 1], y: [34, 0] }, 0.30],
-        [".hero p.sub",  { opacity: [0, 1], y: [20, 0] }, 0.48],
-        [".hero-btns",   { opacity: [0, 1], y: [16, 0] }, 0.62],
-        [".hero-stats",  { opacity: [0, 1], y: [16, 0] }, 0.78],
-        [".terminal",    { opacity: [0, 1], x: [32, 0] }, 0.38],
+        [".status-chip", { opacity: [0, 1], y: [16, 0] }, 0.20],
+        [".hero h1",     { opacity: [0, 1], y: [34, 0] }, 0.36],
+        [".hero p.sub",  { opacity: [0, 1], y: [20, 0] }, 0.56],
+        [".hero-btns",   { opacity: [0, 1], y: [16, 0] }, 0.70],
       ].forEach(function (item) {
         var el = document.querySelector(item[0]);
-        if (el) M.animate(el, item[1], { duration: 0.75, delay: item[2], easing: EASE });
+        if (el) M.animate(el, item[1], { duration: 0.8, delay: item[2], easing: EASE });
       });
+      /* gentle float on the whole hero block after it settles */
+      var heroInner = document.querySelector(".hero-inner");
+      if (heroInner) setTimeout(function () { heroInner.classList.add("float-animation"); }, 1400);
 
       /* Scroll reveal — IO triggers Motion.animate per .reveal element */
       var io = new IntersectionObserver(function (entries) {
@@ -750,48 +717,6 @@
     window.location.href = "mailto:khan.faizan@etu.unige.ch?subject=" + subj + "&body=" + body;
   });
 
-  /* ---------- Terminal typing ---------- */
-  var term = document.getElementById("term");
-  var lines = [
-    { c: "pr", t: "$ " }, { c: "cm", t: "whoami\n" },
-    { c: "ok", t: "faizan_khan — AI builder & mentor · Geneva\n\n" },
-    { c: "pr", t: "$ " }, { c: "cm", t: "cat focus.txt\n" },
-    { c: "gr", t: "> human-centred AI · RAG · LLM agents\n" },
-    { c: "gr", t: "> accessibility · evaluation · social impact\n\n" },
-    { c: "pr", t: "$ " }, { c: "cm", t: "deploy aibility --voice-booking\n" },
-    { c: "vl", t: "[intent] " }, { c: "ok", t: "ride booked — wheelchair-accessible ✓\n" },
-    { c: "vl", t: "[score] " }, { c: "ok", t: "per-profile accessibility computed ✓\n\n" },
-    { c: "pr", t: "$ " }, { c: "cm", t: "eval rcnum-rag\n" },
-    { c: "ok", t: "recall 0.88 · judge 0.61 · hard-fails 0 ✓\n\n" },
-    { c: "pr", t: "$ " }, { c: "cm", t: "echo \"let's build something that matters\"" }
-  ];
-
-  if (reduce) {
-    term.innerHTML = lines.map(function (l) { return '<span class="' + l.c + '">' + l.t.replace(/</g,"&lt;") + "</span>"; }).join("") + '<span class="cursor"></span>';
-  } else {
-    var li = 0, ci = 0;
-    var cursorEl = document.createElement("span"); cursorEl.className = "cursor";
-    function type() {
-      if (li >= lines.length) { return; }
-      var line = lines[li];
-      if (ci === 0) {
-        var span = document.createElement("span");
-        span.className = line.c; span.dataset.idx = li; term.insertBefore(span, cursorEl);
-      }
-      var cur = term.querySelector('span[data-idx="' + li + '"]');
-      var ch = line.t[ci];
-      cur.textContent += ch;
-      ci++;
-      term.appendChild(cursorEl);
-      term.scrollTop = term.scrollHeight;
-      if (ci >= line.t.length) { li++; ci = 0; }
-      var delay = ch === "\n" ? 180 : (lines[li] && lines[li-1] && lines[li-1].c === "pr" ? 28 : 14 + Math.random() * 28);
-      setTimeout(type, delay);
-    }
-    term.appendChild(cursorEl);
-    setTimeout(type, 600);
-  }
-
   /* ---------- Three.js dotted surface background ---------- */
   /* three.min.js is deferred, so wait for DOMContentLoaded (fires after deferred scripts run). */
   document.addEventListener("DOMContentLoaded", function () {
@@ -850,10 +775,10 @@
     geometry.setAttribute("color",    new THREE.Float32BufferAttribute(colors,    3));
 
     var material = new THREE.PointsMaterial({
-      size: 5,
+      size: 6,
       vertexColors: true,
       transparent: true,
-      opacity: 0.65,
+      opacity: 0.85,
       sizeAttenuation: true,
     });
 
