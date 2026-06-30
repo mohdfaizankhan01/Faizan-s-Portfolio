@@ -5,15 +5,15 @@
 <!-- Single-file build: Three.js (CDN) + vanilla JS + CSS. Renders standalone in any browser. -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Faizan Khan — AI Builder & Teacher</title>
-<meta name="description" content="Faizan Khan — AI builder & teacher. I ship LLM agents, RAG and retrieval systems, and evaluation harnesses, grounded in the people they're for. MSc Computer Science, Université de Genève." />
+<title>Faizan Khan — AI Builder & Mentor</title>
+<meta name="description" content="Faizan Khan — AI builder. I ship LLM agents, RAG and retrieval systems, and evaluation harnesses, grounded in the people they're for. MSc Computer Science, Université de Genève." />
 <meta name="author" content="Faizan Khan" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Faizan Khan — AI Builder & Teacher" />
-<meta property="og:description" content="I build AI tools end-to-end — LLM agents, RAG, and evaluation harnesses — and bring the people they're for along. MSc CS, Université de Genève." />
+<meta property="og:title" content="Faizan Khan — AI Builder & Mentor" />
+<meta property="og:description" content="I turn messy human problems into AI tools that actually ship — LLM agents, RAG, evaluation harnesses. MSc CS, Université de Genève." />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Faizan Khan — AI Builder & Teacher" />
-<meta name="twitter:description" content="I build AI tools end-to-end — LLM agents, RAG, and evaluation harnesses — and bring the people they're for along." />
+<meta name="twitter:title" content="Faizan Khan — AI Builder & Mentor" />
+<meta name="twitter:description" content="I turn messy human problems into AI tools that actually ship — LLM agents, RAG, evaluation harnesses." />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2322d3ee'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='%2307070f'/%3E%3Ctext x='16' y='22' font-family='monospace' font-size='18' font-weight='700' text-anchor='middle' fill='url(%23g)'%3EF%3C/text%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -52,26 +52,6 @@
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
   }
-
-  /* ambient gradient blobs behind everything */
-  .ambient {
-    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
-  }
-  .ambient::before, .ambient::after {
-    content: ""; position: absolute; border-radius: 50%; filter: blur(120px); opacity: 0.5;
-  }
-  .ambient::before {
-    width: 50vw; height: 50vw; top: -10vw; left: -8vw;
-    background: radial-gradient(circle, rgba(34,211,238,0.35), transparent 70%);
-    animation: drift 22s var(--ease) infinite alternate;
-  }
-  .ambient::after {
-    width: 45vw; height: 45vw; bottom: -12vw; right: -8vw;
-    background: radial-gradient(circle, rgba(139,92,246,0.32), transparent 70%);
-    animation: drift2 26s var(--ease) infinite alternate;
-  }
-  @keyframes drift { to { transform: translate(8vw, 6vh) scale(1.15); } }
-  @keyframes drift2 { to { transform: translate(-6vw, -5vh) scale(1.2); } }
 
   #bg-canvas { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
 
@@ -138,10 +118,12 @@
   .status-chip .blink { width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); box-shadow: 0 0 10px var(--emerald); animation: blink 1.6s infinite; }
   @keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
   .hero h1 {
-    font-family: "Space Grotesk"; font-weight: 700; font-size: clamp(2.5rem, 6vw, 4.4rem);
-    line-height: 1.02; letter-spacing: -0.04em; margin-bottom: 22px;
+    font-family: "Space Grotesk"; font-weight: 300; font-size: clamp(2.5rem, 6vw, 4.4rem);
+    line-height: 1.08; letter-spacing: -0.03em; margin-bottom: 22px;
   }
-  .hero h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 600; }
+  @keyframes float { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-10px); } }
+  .float-animation { animation: float 6s ease-in-out infinite; }
   .hero p.sub { color: var(--muted); font-size: 1.15rem; max-width: 520px; margin-bottom: 34px; }
   .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
   .btn {
@@ -335,7 +317,6 @@
 
 <a href="#top" class="skip">Skip to content</a>
 
-<div class="ambient"></div>
 <canvas id="bg-canvas" aria-hidden="true"></canvas>
 
 <div class="wrap">
@@ -363,7 +344,7 @@
   <!-- HERO -->
   <section class="hero container" id="top">
     <div class="hero-grid">
-      <div class="hero-copy">
+      <div class="hero-copy float-animation">
         <div class="status-chip"><span class="blink"></span>Open to AI / ML research &amp; engineering roles</div>
         <h1>I turn messy human problems into AI tools that <span class="grad">actually ship</span>.</h1>
         <p class="sub">MSc Computer Science at the Université de Genève. I ship LLM agents, retrieval systems, and evaluation harnesses — grounded in talking to the humans who actually use them.</p>
@@ -693,7 +674,7 @@
   var term = document.getElementById("term");
   var lines = [
     { c: "pr", t: "$ " }, { c: "cm", t: "whoami\n" },
-    { c: "ok", t: "faizan_khan — AI builder & teacher · Geneva\n\n" },
+    { c: "ok", t: "faizan_khan — AI builder & mentor · Geneva\n\n" },
     { c: "pr", t: "$ " }, { c: "cm", t: "cat focus.txt\n" },
     { c: "gr", t: "> human-centred AI · RAG · LLM agents\n" },
     { c: "gr", t: "> accessibility · evaluation · social impact\n\n" },
@@ -731,92 +712,63 @@
     setTimeout(type, 600);
   }
 
-  /* ---------- Three.js particle network background ---------- */
+  /* ---------- Three.js aurora background ---------- */
   /* three.min.js is deferred, so wait for DOMContentLoaded (fires after deferred scripts run). */
   document.addEventListener("DOMContentLoaded", function () {
   if (!reduce && window.THREE) {
     var canvas = document.getElementById("bg-canvas");
-    var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: false });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     var scene = new THREE.Scene();
-    var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 60;
+    var camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
 
-    var COUNT = window.innerWidth < 768 ? 70 : 130;
-    var positions = new Float32Array(COUNT * 3);
-    var velocities = [];
-    var spread = 90;
-    for (var i = 0; i < COUNT; i++) {
-      positions[i*3]   = (Math.random() - 0.5) * spread;
-      positions[i*3+1] = (Math.random() - 0.5) * spread * 0.6;
-      positions[i*3+2] = (Math.random() - 0.5) * spread * 0.6;
-      velocities.push({ x: (Math.random()-0.5)*0.04, y: (Math.random()-0.5)*0.04, z: (Math.random()-0.5)*0.04 });
-    }
-
-    var pGeo = new THREE.BufferGeometry();
-    pGeo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    var pMat = new THREE.PointsMaterial({ color: 0x22d3ee, size: 1.3, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false });
-    var points = new THREE.Points(pGeo, pMat);
-    scene.add(points);
-
-    var lineGeo = new THREE.BufferGeometry();
-    var linePos = new Float32Array(COUNT * COUNT * 3);
-    lineGeo.setAttribute("position", new THREE.BufferAttribute(linePos, 3));
-    var lineMat = new THREE.LineBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false });
-    var lines3d = new THREE.LineSegments(lineGeo, lineMat);
-    scene.add(lines3d);
-
-    var mouse = { x: 0, y: 0 };
-    window.addEventListener("mousemove", function (e) {
-      mouse.x = (e.clientX / window.innerWidth - 0.5);
-      mouse.y = (e.clientY / window.innerHeight - 0.5);
+    var geometry = new THREE.PlaneGeometry(2, 2);
+    var material = new THREE.ShaderMaterial({
+      uniforms: {
+        iTime: { value: 0 },
+        iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+      },
+      vertexShader: "void main() { gl_Position = vec4(position, 1.0); }",
+      fragmentShader: [
+        "uniform float iTime;",
+        "uniform vec2 iResolution;",
+        "#define NUM_OCTAVES 3",
+        "float rand(vec2 n){return fract(sin(dot(n,vec2(12.9898,4.1414)))*43758.5453);}",
+        "float noise(vec2 p){vec2 ip=floor(p);vec2 u=fract(p);u=u*u*(3.0-2.0*u);float res=mix(mix(rand(ip),rand(ip+vec2(1.0,0.0)),u.x),mix(rand(ip+vec2(0.0,1.0)),rand(ip+vec2(1.0,1.0)),u.x),u.y);return res*res;}",
+        "float fbm(vec2 x){float v=0.0;float a=0.3;vec2 shift=vec2(100);mat2 rot=mat2(cos(0.5),sin(0.5),-sin(0.5),cos(0.5));for(int i=0;i<NUM_OCTAVES;++i){v+=a*noise(x);x=rot*x*2.0+shift;a*=0.4;}return v;}",
+        "void main(){",
+        "  vec2 p=((gl_FragCoord.xy)-iResolution.xy*0.5)/iResolution.y*mat2(6.,-4.,4.,6.);",
+        "  vec4 o=vec4(0.);",
+        "  float f=2.+fbm(p+vec2(iTime*5.,0.))*.5;",
+        "  for(float i=0.;i++<35.;){",
+        "    vec2 v=p+cos(i*i+(iTime+p.x*.08)*.025+i*vec2(13.,11.))*3.5;",
+        "    float tailNoise=fbm(v+vec2(iTime*.5,i))*.3*(1.-(i/35.));",
+        "    vec4 auroraColors=vec4(.1+.3*sin(i*.2+iTime*.4),.3+.5*cos(i*.3+iTime*.5),.7+.3*sin(i*.4+iTime*.3),1.);",
+        "    vec4 cc=auroraColors*exp(sin(i*i+iTime*.8))/length(max(v,vec2(v.x*f*.015,v.y*1.5)));",
+        "    o+=cc*(1.+tailNoise*.8)*smoothstep(0.,1.,i/35.)*.6;",
+        "  }",
+        "  o=tanh(pow(o/100.,vec4(1.6)));",
+        "  gl_FragColor=o*1.5;",
+        "}"
+      ].join("\n")
     });
 
-    var MAX_DIST = 16;
+    var mesh = new THREE.Mesh(geometry, material);
+    scene.add(mesh);
+
+    var animId;
     function animate() {
-      requestAnimationFrame(animate);
-      var pos = pGeo.attributes.position.array;
-      for (var i = 0; i < COUNT; i++) {
-        pos[i*3]   += velocities[i].x;
-        pos[i*3+1] += velocities[i].y;
-        pos[i*3+2] += velocities[i].z;
-        if (Math.abs(pos[i*3])   > spread/2) velocities[i].x *= -1;
-        if (Math.abs(pos[i*3+1]) > spread*0.3) velocities[i].y *= -1;
-        if (Math.abs(pos[i*3+2]) > spread*0.3) velocities[i].z *= -1;
-      }
-      pGeo.attributes.position.needsUpdate = true;
-
-      var lp = lineGeo.attributes.position.array;
-      var vi = 0;
-      for (var a = 0; a < COUNT; a++) {
-        for (var b = a + 1; b < COUNT; b++) {
-          var dx = pos[a*3]-pos[b*3], dy = pos[a*3+1]-pos[b*3+1], dz = pos[a*3+2]-pos[b*3+2];
-          var d = Math.sqrt(dx*dx + dy*dy + dz*dz);
-          if (d < MAX_DIST) {
-            lp[vi++] = pos[a*3]; lp[vi++] = pos[a*3+1]; lp[vi++] = pos[a*3+2];
-            lp[vi++] = pos[b*3]; lp[vi++] = pos[b*3+1]; lp[vi++] = pos[b*3+2];
-          }
-        }
-      }
-      for (var z = vi; z < lp.length; z++) lp[z] = 0;
-      lineGeo.attributes.position.needsUpdate = true;
-      lineGeo.setDrawRange(0, vi / 3);
-
-      scene.rotation.y += (mouse.x * 0.5 - scene.rotation.y) * 0.03;
-      scene.rotation.x += (mouse.y * 0.3 - scene.rotation.x) * 0.03;
-      points.rotation.y += 0.0008;
-      lines3d.rotation.y = points.rotation.y;
-
+      animId = requestAnimationFrame(animate);
+      material.uniforms.iTime.value += 0.016;
       renderer.render(scene, camera);
     }
     animate();
 
     window.addEventListener("resize", function () {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      material.uniforms.iResolution.value.set(window.innerWidth, window.innerHeight);
     });
   }
   });
