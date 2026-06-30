@@ -65,6 +65,17 @@
   }
   @media (prefers-reduced-motion: reduce) { .cursor-glow { display: none; } }
 
+  /* glowing ball that trails the cursor */
+  .cursor-ball {
+    position: fixed; top: 0; left: 0; width: 16px; height: 16px; border-radius: 50%;
+    pointer-events: none; z-index: 60; opacity: 0; transform: translate(-50%, -50%);
+    background: var(--grad); box-shadow: 0 0 16px rgba(34,211,238,0.65), 0 0 30px rgba(139,92,246,0.4);
+    mix-blend-mode: screen;
+    transition: opacity 0.4s var(--ease), width 0.25s var(--ease), height 0.25s var(--ease), background 0.3s;
+  }
+  .cursor-ball.hover { width: 46px; height: 46px; background: var(--grad-soft); }
+  @media (prefers-reduced-motion: reduce) { .cursor-ball { display: none; } }
+
   .wrap { position: relative; z-index: 2; }
   .container { width: min(1180px, 92vw); margin: 0 auto; }
 
@@ -318,6 +329,7 @@
 
 <canvas id="bg-canvas" aria-hidden="true"></canvas>
 <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+<div class="cursor-ball" id="cursorBall" aria-hidden="true"></div>
 
 <div class="wrap">
   <!-- NAV -->
@@ -628,20 +640,33 @@
     if (e.target.tagName === "A") { navlinks.classList.remove("open"); menuBtn.setAttribute("aria-expanded", "false"); }
   });
 
-  /* ---------- Cursor-trailing glow ---------- */
+  /* ---------- Cursor-trailing glow + ball ---------- */
   var glow = document.getElementById("cursorGlow");
-  if (glow && !reduce && window.matchMedia("(pointer: fine)").matches) {
-    var gx = window.innerWidth / 2, gy = window.innerHeight / 2;
+  var ball = document.getElementById("cursorBall");
+  if (glow && ball && !reduce && window.matchMedia("(pointer: fine)").matches) {
+    var gx = window.innerWidth / 2, gy = window.innerHeight / 2;   /* glow position */
+    var bx = gx, by = gy;                                          /* ball position */
     var tx = gx, ty = gy, shown = false, glowRaf;
     window.addEventListener("mousemove", function (e) {
       tx = e.clientX; ty = e.clientY;
-      if (!shown) { glow.style.opacity = "1"; shown = true; }
+      if (!shown) { glow.style.opacity = "1"; ball.style.opacity = "1"; shown = true; }
     });
-    document.addEventListener("mouseleave", function () { glow.style.opacity = "0"; shown = false; });
+    document.addEventListener("mouseleave", function () { glow.style.opacity = "0"; ball.style.opacity = "0"; shown = false; });
+
+    /* ball grows over interactive elements */
+    document.addEventListener("mouseover", function (e) {
+      if (e.target.closest("a, button, input, textarea, .proj, .skill-card, .post, .quote")) ball.classList.add("hover");
+    });
+    document.addEventListener("mouseout", function (e) {
+      if (e.target.closest("a, button, input, textarea, .proj, .skill-card, .post, .quote")) ball.classList.remove("hover");
+    });
+
     (function follow() {
       glowRaf = requestAnimationFrame(follow);
-      gx += (tx - gx) * 0.12; gy += (ty - gy) * 0.12;
+      gx += (tx - gx) * 0.12; gy += (ty - gy) * 0.12;   /* glow lags more */
+      bx += (tx - bx) * 0.22; by += (ty - by) * 0.22;   /* ball follows tighter */
       glow.style.left = gx + "px"; glow.style.top = gy + "px";
+      ball.style.left = bx + "px"; ball.style.top = by + "px";
     })();
   }
 
