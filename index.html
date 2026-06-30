@@ -19,6 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/motion@11.11.13/dist/motion.js"></script>
 
 <style>
   :root {
@@ -103,9 +104,17 @@
 
   .glass {
     background: var(--surface); border: 1px solid var(--border);
-    border-radius: var(--radius); backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    border-radius: var(--radius); backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
   }
+
+  /* radial glow behind hero copy so text stays readable over the dots */
+  .hero-copy::before {
+    content: ""; position: absolute; inset: -60px -80px;
+    background: radial-gradient(ellipse at center, rgba(7,7,15,0.82) 40%, transparent 75%);
+    z-index: -1; pointer-events: none; border-radius: 50%;
+  }
+  .hero-copy { position: relative; }
 
   /* ---------- HERO ---------- */
   .hero { min-height: 100vh; display: flex; align-items: center; padding-top: 120px; padding-bottom: 60px; }
@@ -643,11 +652,82 @@
     if (e.target.tagName === "A") { navlinks.classList.remove("open"); menuBtn.setAttribute("aria-expanded", "false"); }
   });
 
-  /* ---------- Scroll reveal ---------- */
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
-  }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
-  document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+  /* ---------- Scroll reveal + Motion entrance animations ---------- */
+  /* motion.js is deferred — wait for DOMContentLoaded before accessing window.Motion */
+  if (reduce) {
+    document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("in"); });
+  } else {
+    document.addEventListener("DOMContentLoaded", function () {
+      var M = window.Motion;
+      var EASE = [0.22, 1, 0.36, 1];
+
+      if (!M) {
+        /* Motion CDN failed — fall back to plain IO */
+        var ioFb = new IntersectionObserver(function (entries) {
+          entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); ioFb.unobserve(en.target); } });
+        }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+        document.querySelectorAll(".reveal").forEach(function (el) { ioFb.observe(el); });
+        return;
+      }
+
+      /* Hero entrance — staggered sequence */
+      [
+        [".status-chip", { opacity: [0, 1], y: [16, 0] }, 0.15],
+        [".hero h1",     { opacity: [0, 1], y: [34, 0] }, 0.30],
+        [".hero p.sub",  { opacity: [0, 1], y: [20, 0] }, 0.48],
+        [".hero-btns",   { opacity: [0, 1], y: [16, 0] }, 0.62],
+        [".hero-stats",  { opacity: [0, 1], y: [16, 0] }, 0.78],
+        [".terminal",    { opacity: [0, 1], x: [32, 0] }, 0.38],
+      ].forEach(function (item) {
+        var el = document.querySelector(item[0]);
+        if (el) M.animate(el, item[1], { duration: 0.75, delay: item[2], easing: EASE });
+      });
+
+      /* Scroll reveal — IO triggers Motion.animate per .reveal element */
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) {
+          if (!en.isIntersecting) return;
+          var d = parseFloat(en.target.dataset.d || 0) * 0.1;
+          M.animate(en.target, { opacity: [0, 1], y: [28, 0] }, { duration: 0.8, delay: d, easing: EASE });
+          io.unobserve(en.target);
+        });
+      }, { threshold: 0.1, rootMargin: "0px 0px -40px 0px" });
+      document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+
+      /* Stagger project cards */
+      var projGrid = document.querySelector(".proj-grid");
+      if (projGrid) {
+        var projIo = new IntersectionObserver(function (entries) {
+          if (!entries[0].isIntersecting) return;
+          M.animate(projGrid.querySelectorAll(".proj"), { opacity: [0, 1], y: [40, 0] }, { delay: M.stagger(0.13), duration: 0.7, easing: EASE });
+          projIo.disconnect();
+        }, { threshold: 0.08 });
+        projIo.observe(projGrid);
+      }
+
+      /* Stagger timeline items */
+      var tl = document.querySelector(".timeline");
+      if (tl) {
+        var tlIo = new IntersectionObserver(function (entries) {
+          if (!entries[0].isIntersecting) return;
+          M.animate(tl.querySelectorAll(".tl-item"), { opacity: [0, 1], x: [-18, 0] }, { delay: M.stagger(0.1), duration: 0.65, easing: EASE });
+          tlIo.disconnect();
+        }, { threshold: 0.08 });
+        tlIo.observe(tl);
+      }
+
+      /* Stagger contact links */
+      var clinks = document.querySelector(".contact-links");
+      if (clinks) {
+        var clIo = new IntersectionObserver(function (entries) {
+          if (!entries[0].isIntersecting) return;
+          M.animate(clinks.querySelectorAll(".clink"), { opacity: [0, 1], x: [-16, 0] }, { delay: M.stagger(0.08), duration: 0.6, easing: EASE });
+          clIo.disconnect();
+        }, { threshold: 0.1 });
+        clIo.observe(clinks);
+      }
+    });
+  }
 
   /* ---------- Tech stack pills ---------- */
   var techs = ["Python","SQL","FastAPI","SQLite","GraphDB","SPARQL","ChromaDB","sentence-transformers","LangChain","PyTorch","TensorFlow","HuggingFace","Groq","Ollama","Claude API","OpenAI","OSRM","WebSocket","Git","AWS","GCP","faster-whisper","Power BI","Tableau","scikit-learn","NumPy","SciPy","REST"];
@@ -712,63 +792,98 @@
     setTimeout(type, 600);
   }
 
-  /* ---------- Three.js aurora background ---------- */
+  /* ---------- Three.js dotted surface background ---------- */
   /* three.min.js is deferred, so wait for DOMContentLoaded (fires after deferred scripts run). */
   document.addEventListener("DOMContentLoaded", function () {
   if (!reduce && window.THREE) {
     var canvas = document.getElementById("bg-canvas");
-    var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    var SEPARATION = 150, AMOUNTX = 40, AMOUNTY = 60;
 
     var scene = new THREE.Scene();
-    var camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    scene.fog = new THREE.Fog(0x07070f, 2000, 9000);
 
-    var geometry = new THREE.PlaneGeometry(2, 2);
-    var material = new THREE.ShaderMaterial({
-      uniforms: {
-        iTime: { value: 0 },
-        iResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
-      },
-      vertexShader: "void main() { gl_Position = vec4(position, 1.0); }",
-      fragmentShader: [
-        "uniform float iTime;",
-        "uniform vec2 iResolution;",
-        "#define NUM_OCTAVES 3",
-        "float rand(vec2 n){return fract(sin(dot(n,vec2(12.9898,4.1414)))*43758.5453);}",
-        "float noise(vec2 p){vec2 ip=floor(p);vec2 u=fract(p);u=u*u*(3.0-2.0*u);float res=mix(mix(rand(ip),rand(ip+vec2(1.0,0.0)),u.x),mix(rand(ip+vec2(0.0,1.0)),rand(ip+vec2(1.0,1.0)),u.x),u.y);return res*res;}",
-        "float fbm(vec2 x){float v=0.0;float a=0.3;vec2 shift=vec2(100);mat2 rot=mat2(cos(0.5),sin(0.5),-sin(0.5),cos(0.5));for(int i=0;i<NUM_OCTAVES;++i){v+=a*noise(x);x=rot*x*2.0+shift;a*=0.4;}return v;}",
-        "void main(){",
-        "  vec2 p=((gl_FragCoord.xy)-iResolution.xy*0.5)/iResolution.y*mat2(6.,-4.,4.,6.);",
-        "  vec4 o=vec4(0.);",
-        "  float f=2.+fbm(p+vec2(iTime*5.,0.))*.5;",
-        "  for(float i=0.;i++<35.;){",
-        "    vec2 v=p+cos(i*i+(iTime+p.x*.08)*.025+i*vec2(13.,11.))*3.5;",
-        "    float tailNoise=fbm(v+vec2(iTime*.5,i))*.3*(1.-(i/35.));",
-        "    vec4 auroraColors=vec4(.1+.3*sin(i*.2+iTime*.4),.3+.5*cos(i*.3+iTime*.5),.7+.3*sin(i*.4+iTime*.3),1.);",
-        "    vec4 cc=auroraColors*exp(sin(i*i+iTime*.8))/length(max(v,vec2(v.x*f*.015,v.y*1.5)));",
-        "    o+=cc*(1.+tailNoise*.8)*smoothstep(0.,1.,i/35.)*.6;",
-        "  }",
-        "  o=tanh(pow(o/100.,vec4(1.6)));",
-        "  gl_FragColor=o*1.5;",
-        "}"
-      ].join("\n")
+    var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 10000);
+    camera.position.set(0, 355, 1220);
+
+    var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x07070f, 0);
+
+    /* Build particle grid with cyan→violet colour gradient */
+    var positions = [], colors = [];
+    /* theme palette: emerald #34d399 → cyan #22d3ee → violet #8b5cf6 */
+    var PALETTE = [
+      [0.204, 0.827, 0.600],  /* emerald */
+      [0.133, 0.827, 0.933],  /* cyan    */
+      [0.545, 0.361, 0.965],  /* violet  */
+    ];
+
+    for (var ix = 0; ix < AMOUNTX; ix++) {
+      for (var iy = 0; iy < AMOUNTY; iy++) {
+        positions.push(
+          ix * SEPARATION - (AMOUNTX * SEPARATION) / 2,
+          0,
+          iy * SEPARATION - (AMOUNTY * SEPARATION) / 2
+        );
+        /* interpolate across three palette stops based on x */
+        var t = ix / (AMOUNTX - 1);
+        var r, g, b;
+        if (t < 0.5) {
+          var u = t * 2;
+          r = PALETTE[0][0] + u * (PALETTE[1][0] - PALETTE[0][0]);
+          g = PALETTE[0][1] + u * (PALETTE[1][1] - PALETTE[0][1]);
+          b = PALETTE[0][2] + u * (PALETTE[1][2] - PALETTE[0][2]);
+        } else {
+          var u = (t - 0.5) * 2;
+          r = PALETTE[1][0] + u * (PALETTE[2][0] - PALETTE[1][0]);
+          g = PALETTE[1][1] + u * (PALETTE[2][1] - PALETTE[1][1]);
+          b = PALETTE[1][2] + u * (PALETTE[2][2] - PALETTE[1][2]);
+        }
+        colors.push(r, g, b);
+      }
+    }
+
+    var geometry = new THREE.BufferGeometry();
+    geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+    geometry.setAttribute("color",    new THREE.Float32BufferAttribute(colors,    3));
+
+    var material = new THREE.PointsMaterial({
+      size: 5,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.65,
+      sizeAttenuation: true,
     });
 
-    var mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
+    var points = new THREE.Points(geometry, material);
+    scene.add(points);
 
-    var animId;
+    var count = 0, animId;
     function animate() {
       animId = requestAnimationFrame(animate);
-      material.uniforms.iTime.value += 0.016;
+      var posAttr = geometry.attributes.position;
+      var pos = posAttr.array;
+      var i = 0;
+      for (var ix = 0; ix < AMOUNTX; ix++) {
+        for (var iy = 0; iy < AMOUNTY; iy++) {
+          pos[i * 3 + 1] =
+            Math.sin((ix + count) * 0.3) * 50 +
+            Math.sin((iy + count) * 0.5) * 50;
+          i++;
+        }
+      }
+      posAttr.needsUpdate = true;
       renderer.render(scene, camera);
+      count += 0.1;
     }
     animate();
 
     window.addEventListener("resize", function () {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
-      material.uniforms.iResolution.value.set(window.innerWidth, window.innerHeight);
     });
   }
   });
