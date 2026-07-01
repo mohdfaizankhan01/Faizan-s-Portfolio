@@ -196,12 +196,14 @@
     transform-style: preserve-3d;
   }
   .proj:hover { transform: translateY(-6px); border-color: var(--border-glow); box-shadow: 0 30px 60px -25px rgba(34,211,238,0.25); }
-  .proj-top { height: 150px; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(34,211,238,0.12), rgba(139,92,246,0.12)); border-bottom: 1px solid var(--border); }
+  .proj-top { height: 160px; position: relative; overflow: hidden; background: linear-gradient(135deg, rgba(34,211,238,0.12), rgba(139,92,246,0.12)); border-bottom: 1px solid var(--border); }
   .proj-top .glyph { position: absolute; inset: 0; display: grid; place-items: center; font-family: "JetBrains Mono"; font-size: 0.7rem; color: var(--faint); opacity: 0.5; }
   .proj-top .mesh { position: absolute; inset: 0; opacity: 0.35; background-image: linear-gradient(rgba(34,211,238,0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(34,211,238,0.18) 1px, transparent 1px); background-size: 26px 26px; transition: transform 0.6s var(--ease); }
   .proj:hover .mesh { transform: scale(1.12) rotate(2deg); }
-  .proj-tag { position: absolute; top: 14px; left: 14px; font-family: "JetBrains Mono"; font-size: 0.68rem; color: var(--emerald); background: rgba(7,7,15,0.7); border: 1px solid rgba(52,211,153,0.3); padding: 4px 10px; border-radius: 999px; }
-  .proj-yr { position: absolute; top: 14px; right: 14px; font-family: "JetBrains Mono"; font-size: 0.7rem; color: var(--muted); }
+  .proj-top img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; transition: transform 0.6s var(--ease); }
+  .proj:hover .proj-top img { transform: scale(1.05); }
+  .proj-tag { position: absolute; top: 14px; left: 14px; z-index: 2; font-family: "JetBrains Mono"; font-size: 0.68rem; color: var(--emerald); background: rgba(7,7,15,0.7); border: 1px solid rgba(52,211,153,0.3); padding: 4px 10px; border-radius: 999px; }
+  .proj-yr { position: absolute; top: 14px; right: 14px; z-index: 2; font-family: "JetBrains Mono"; font-size: 0.7rem; color: var(--muted); }
   .proj-body { padding: 24px; }
   .proj-body h3 { font-family: "Space Grotesk"; font-size: 1.25rem; margin-bottom: 8px; letter-spacing: -0.02em; }
   .proj-body .role { font-family: "JetBrains Mono"; font-size: 0.74rem; color: var(--cyan); margin-bottom: 12px; }
@@ -441,7 +443,7 @@
     <div class="proj-grid">
 
       <article class="proj glass reveal">
-        <div class="proj-top"><div class="mesh"></div><span class="proj-tag">with disability orgs</span><span class="proj-yr">2026</span><div class="glyph">voice → intent → accessible ride</div></div>
+        <div class="proj-top"><img src="images/aibility.svg" alt="AIBility — voice booking to accessible route" loading="lazy" /><span class="proj-tag">with disability orgs</span><span class="proj-yr">2026</span></div>
         <div class="proj-body">
           <h3>AIBility</h3>
           <div class="role">Accessible mobility for disabled riders · UNIGE</div>
